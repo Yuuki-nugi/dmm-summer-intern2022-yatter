@@ -11,7 +11,7 @@ type (
 		// The username of the account
 		AccountID int64 `json:"-" db:"account_id"`
 
-		Account *Account `json:"account"`
+		Account Account `json:"account" db:"account"`
 
 		Content *string `json:"content"`
 

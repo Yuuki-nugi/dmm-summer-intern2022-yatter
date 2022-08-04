@@ -25,7 +25,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	account := auth.AccountOf(r)
 	status.AccountID = account.ID
 	status.Content = &req.Status
-	status.Account = account
+	status.Account = *account
 	ctx := r.Context()
 	if created_status, err := h.app.Dao.Status().CreateStatus(ctx, status); err != nil {
 		httperror.InternalServerError(w, err)
