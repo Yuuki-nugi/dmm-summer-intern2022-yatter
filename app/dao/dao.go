@@ -16,6 +16,8 @@ type (
 
 		Status() repository.Status
 
+		Timelines() repository.Timelines
+
 		// Clear all data in DB
 		InitAll() error
 	}
@@ -42,6 +44,10 @@ func (d *dao) Account() repository.Account {
 
 func (d *dao) Status() repository.Status {
 	return NewStatus(d.db)
+}
+
+func (d *dao) Timelines() repository.Timelines {
+	return NewTimelines(d.db)
 }
 
 func (d *dao) InitAll() error {
