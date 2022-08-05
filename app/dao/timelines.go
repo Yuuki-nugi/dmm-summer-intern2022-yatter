@@ -24,7 +24,7 @@ func NewTimelines(db *sqlx.DB) repository.Timelines {
 	return &timelines{db: db}
 }
 
-func (r *timelines) GetPublicTimelines(ctx context.Context, max_id string, since_id string, limit string) ([]*object.Status, error) {
+func (r *timelines) GetPublicTimelines(ctx context.Context, max_id int, since_id int, limit int) ([]*object.Status, error) {
 	rows, err := r.db.QueryxContext(ctx, "select s.id, s.content, s.create_at, a.username as 'account.username', a.create_at as 'account.create_at' from status as s inner join account as a on s.account_id = a.id where s.id <= ? and s.id >= ? limit ?", max_id, since_id, limit)
 	var timelines []*object.Status
 	if err != nil {

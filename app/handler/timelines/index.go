@@ -3,18 +3,42 @@ package timelines
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"yatter-backend-go/app/handler/httperror"
 )
 
+type Queries struct {
+	MaxId   int
+	SinceId int
+	Limit   int
+}
+
 // Handle request for `POST /v1/accounts`
 func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
-	max_id := r.FormValue("max_id")
-	since_id := r.FormValue("since_id")
-	limit := r.FormValue("limit")
+	var formValues Queries
+	queries := []string{"max_id", "since_id", "limit"}
+	for _, v := range queries {
+		value, err := strconv.Atoi(r.FormValue(v))
+		if err != nil {
+			httperror.Error(w, http.StatusBadRequest)
+			return
+		}
+		switch v {
+		case "max_id":
+			formValues.MaxId = value
+		case "since_id":
+			formValues.SinceId = value
+		case "limit":
+			formValues.Limit = value
+		default:
+			httperror.Error(w, http.StatusBadRequest)
+			return
+		}
+	}
 
 	ctx := r.Context()
-	if statuses, err := h.app.Dao.Timelines().GetPublicTimelines(ctx, max_id, since_id, limit); err != nil {
+	if statuses, err := h.app.Dao.Timelines().GetPublicTimelines(ctx, formValues.MaxId, formValues.SinceId, formValues.Limit); err != nil {
 		httperror.InternalServerError(w, err)
 		return
 	} else if statuses == nil {
